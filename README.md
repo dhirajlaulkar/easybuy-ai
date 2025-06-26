@@ -1,6 +1,6 @@
 # EasyBuy: Smart E-commerce Assistant
 
-EasyBuy is a modern, Gemini-powered Streamlit app that helps users discover, compare, and analyze products with AI. It provides personalized recommendations, image analysis, review insights, and product comparisons—all in a beautiful, responsive UI.
+EasyBuy is a modern, Gemini-powered Streamlit app that helps users discover, compare, and analyze products with AI. It provides personalized recommendations, image analysis, review insights, and product comparisons all in a beautiful, responsive UI.
 
 ## Features
 - **Product Recommendations:** Get tailored product suggestions based on your needs and budget.
