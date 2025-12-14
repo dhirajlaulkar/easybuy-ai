@@ -1,10 +1,33 @@
-import google.generativeai as genai
+import os
+from groq import Groq
 from PIL import Image
+import base64
+from io import BytesIO
 
 class EcommerceAssistant:
     def __init__(self):
-        self.model = genai.GenerativeModel('models/gemini-1.5-flash')
-        self.vision_model = genai.GenerativeModel('models/gemini-1.5-flash')
+        # Ensure GROQ_API_KEY is available in environment
+        self.client = Groq(
+            api_key=os.environ.get("GROQ_API_KEY"),
+        )
+        self.text_model = "llama-3.3-70b-versatile"
+        self.vision_model = "llama-3.2-11b-vision-preview"
+
+    def _get_completion(self, prompt, model=None):
+        if model is None:
+            model = self.text_model
+            
+        chat_completion = self.client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            model=model,
+        )
+        return chat_completion.choices[0].message.content
+
     def product_recommendation(self, user_query, budget=None, category=None):
         prompt = f"""
         You are an expert e-commerce assistant. Based on the user's query, provide personalized product recommendations.
@@ -19,10 +42,18 @@ class EcommerceAssistant:
         5. Things to avoid
         Format as a helpful shopping guide. All prices and budgets must be in INR (₹).
         """
-        response = self.model.generate_content(prompt)
-        return response.text
+        return self._get_completion(prompt)
+
     def analyze_product_image(self, image, context=""):
-        prompt = f"""
+        # Convert PIL Image to base64
+        buffered = BytesIO()
+        # Convert to RGB if necessary (e.g. for PNG with alpha) to save as JPEG
+        if image.mode in ("RGBA", "P"):
+            image = image.convert("RGB")
+        image.save(buffered, format="JPEG")
+        base64_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        prompt_text = f"""
         Analyze this product image and provide:
         1. Product identification and category
         2. Key visual features and design elements
@@ -33,8 +64,26 @@ class EcommerceAssistant:
         Additional context: {context}
         All price estimates must be in INR (₹).
         """
-        response = self.vision_model.generate_content([prompt, image])
-        return response.text
+
+        chat_completion = self.client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt_text},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}",
+                            },
+                        },
+                    ],
+                }
+            ],
+            model=self.vision_model,
+        )
+        return chat_completion.choices[0].message.content
+
     def review_sentiment_analysis(self, reviews_text):
         prompt = f"""
         Analyze the following customer reviews and provide:
@@ -46,22 +95,8 @@ class EcommerceAssistant:
         Reviews:
         {reviews_text}
         """
-        response = self.model.generate_content(prompt)
-        return response.text
-    def price_analysis(self, product_name, prices_data):
-        prompt = f"""
-        Analyze the pricing data for {product_name} and provide:
-        1. Best value assessment
-        2. Price trend analysis
-        3. When to buy recommendations
-        4. Platform comparison
-        5. Potential savings opportunities
-        Pricing Data (all prices in INR ₹):
-        {prices_data}
-        All price analysis and recommendations must be in INR (₹).
-        """
-        response = self.model.generate_content(prompt)
-        return response.text
+        return self._get_completion(prompt)
+
     def compare_products(self, product1_details, product2_details):
         prompt = f"""
         Compare these two products and provide a detailed analysis:
@@ -74,5 +109,4 @@ class EcommerceAssistant:
         4. Final recommendation with reasoning
         5. Pros and cons of each
         """
-        response = self.model.generate_content(prompt)
-        return response.text
+        return self._get_completion(prompt)

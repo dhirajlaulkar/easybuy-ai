@@ -1,6 +1,6 @@
 # EasyBuy: Smart E-commerce Assistant
 
-EasyBuy is a modern, Gemini-powered Streamlit app that helps users discover, compare, and analyze products with AI. It provides personalized recommendations, image analysis, review insights, and product comparisons all in a beautiful, responsive UI.
+EasyBuy is a modern, Groq-powered Streamlit app that helps users discover, compare, and analyze products with AI. It provides personalized recommendations, image analysis, review insights, and product comparisons all in a beautiful, responsive UI.
 
 ## Features
 - **Product Recommendations:** Get tailored product suggestions based on your needs and budget.
@@ -14,7 +14,7 @@ main.py                # Entry point for the Streamlit app
 requirements.txt       # Python dependencies
 .env                   # Environment variables (not committed)
 easybuy_ui.py          # All Streamlit UI logic
- easybuy_core.py       # Gemini assistant logic
+ easybuy_core.py       # Groq assistant logic
  easybuy_styles.py     # Custom CSS/styles
 ```
 
@@ -27,10 +27,10 @@ easybuy_ui.py          # All Streamlit UI logic
 pip install -r requirements.txt
 ```
 
-3. **Set up your Gemini API key**
+3. **Set up your Groq API key**
 - Create a `.env` file in the project root:
 ```
-GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
 4. **Run the app**
