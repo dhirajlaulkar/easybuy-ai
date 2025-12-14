@@ -8,8 +8,18 @@ from dotenv import load_dotenv
 
 # --- Load environment variables ---
 load_dotenv()
-if not os.getenv("GROQ_API_KEY"):
-    st.error("GROQ_API_KEY not found in environment variables. Please set it in your .env file.")
+
+# Helper to check for key
+def get_api_key():
+    try:
+        if "GROQ_API_KEY" in st.secrets:
+            return st.secrets["GROQ_API_KEY"]
+    except (FileNotFoundError, AttributeError):
+        pass
+    return os.getenv("GROQ_API_KEY")
+
+if not get_api_key():
+    st.error("GROQ_API_KEY not found! Please set it in .env (local) or Streamlit Secrets (cloud).")
 
 
 def run_easybuy_ui():

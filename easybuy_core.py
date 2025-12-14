@@ -5,10 +5,22 @@ import base64
 from io import BytesIO
 
 class EcommerceAssistant:
+
     def __init__(self):
-        # Ensure GROQ_API_KEY is available in environment
+        # Try to get key from Streamlit secrets first, then environment variables
+        api_key = None
+        try:
+            import streamlit as st
+            if "GROQ_API_KEY" in st.secrets:
+                api_key = st.secrets["GROQ_API_KEY"]
+        except (ImportError, FileNotFoundError):
+            pass
+            
+        if not api_key:
+            api_key = os.environ.get("GROQ_API_KEY")
+
         self.client = Groq(
-            api_key=os.environ.get("GROQ_API_KEY"),
+            api_key=api_key,
         )
         self.text_model = "llama-3.3-70b-versatile"
         self.vision_model = "llama-3.2-11b-vision-preview"
