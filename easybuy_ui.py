@@ -4,12 +4,13 @@ from easybuy_core import EcommerceAssistant
 from easybuy_styles import inject_custom_css
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
 
-# --- Load environment variables and configure Gemini ---
+
+# --- Load environment variables ---
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY)
+if not os.getenv("GROQ_API_KEY"):
+    st.error("GROQ_API_KEY not found in environment variables. Please set it in your .env file.")
+
 
 def run_easybuy_ui():
     inject_custom_css()
@@ -21,9 +22,9 @@ def run_easybuy_ui():
     with st.container():
         st.markdown("""
         <div class="hero fade-in">
-            <div class="badge">AI-powered Shopping • Gemini 1.5 Flash</div>
+            <div class="badge">AI-powered Shopping • Llama 3 via Groq</div>
             <h1>EasyBuy Assistant</h1>
-            <p>Discover, compare, and analyze products with the power of Gemini AI.<br>Get personalized recommendations, image insights, and more!</p>
+            <p>Discover, compare, and analyze products with the power of Groq AI.<br>Get personalized recommendations, image insights, and more!</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -134,14 +135,14 @@ def run_easybuy_ui():
                                 table_md += f"<tr><td>{f[0]}</td><td>{f[1]}</td><td>{f[2]}</td></tr>"
                             table_md += "</tbody></table>"
                             st.markdown(table_md, unsafe_allow_html=True)
-                        st.markdown(f"<div class='stCard fade-in' style='background:#172554;border-left:6px solid #22d3ee;'><b>Gemini's Recommendation:</b><br>{comparison}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='stCard fade-in' style='background:#172554;border-left:6px solid #22d3ee;'><b>AI Recommendation:</b><br>{comparison}</div>", unsafe_allow_html=True)
                 elif cmp_submitted:
                     st.warning("Please enter details for both products!")
                 st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Footer ---
     st.markdown("<hr style='border:1px solid #334155;margin:2em 0 1em 0;'>", unsafe_allow_html=True)
-    st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.1rem;'> This assistant uses Gemini AI.</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center; color:#94a3b8; font-size:1.1rem;'> This assistant uses Groq AI.</div>", unsafe_allow_html=True)
 
 # At the end of the file, add:
 if __name__ == "__main__":
